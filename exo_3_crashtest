@@ -1,0 +1,201 @@
+import random
+import time
+import tools
+
+authorized_input: list[str] = ["y", "n"]
+playerToken: str = "X"
+botToken: str = "O"
+
+
+# utiliser ça pour add à la grille ? peut-être vider
+# la grille puis avec boucle for ou while a et b (correspondant
+# à l'input pour GRID_LENGTH réparti en longueur et largeur, et faire un grille.append("")
+
+
+def GetGrid(length) -> list[list[str]]:
+    grille: list[list[str]] = []
+    GRID_LENGTH: int = length
+    i: int = 0
+    while i < GRID_LENGTH:
+        line: list[str] = []
+
+        j: int = 0
+        while j < GRID_LENGTH:
+            line.append("")
+            j += 1
+
+        grille.append(line)
+        i += 1
+
+    return grille
+
+
+def ResetGrid(grille):
+    i: int = 0
+    j: int = 0
+    while i < len(grille):
+        while j < len(grille[i]):
+            print(len(grille[i]))
+            grille[i][j] = ""
+            j += 1
+        print(grille[i])
+        i += 1
+
+
+def PrintGrid(grille: list[list[str]]):
+    i: int = 0
+    j: int = 0
+    while i < len(grille):
+        print(grille[i])
+        i += 1
+    print("\n----------------------------\n")
+
+
+# def isMatchNull(gridlength: int, grille: list[list[str]]) -> bool:
+#     i: int = 0
+#     while i < gridlength:
+#         if grille[i] == "":
+#             is_Match_Null = False
+#         else:
+#             is_Match_Null = True
+#         i += 1
+#
+#     return is_Match_Null
+
+
+def CheckVoidAddToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn: bool, gridlength: int):
+    if isplayerturn:
+        while True:
+            print(f"Entrez le numéro de la ligne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
+            x: int = tools.ask_int_in_range(0, gridlength)
+
+            print("Entrez le numéro de la colonne où vous voulez placer votre jeton de 0 à 2 : ")
+            y: int = tools.ask_int_in_range(0, gridlength)
+            if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
+                print("wow")
+            else:
+                grid[x][y] = playtoken
+                print("ah bahj ouais")
+                break
+    else:
+        while True:
+            x: int = random.randint(0, gridlength - 1)
+            y: int = random.randint(0, gridlength - 1)
+
+            if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
+                print("je ne peux plus jouer")
+            else:
+                grid[x][y] = playtoken
+                print("ah bahj ouais")
+                break
+    return
+
+#pour les condi de victoires, il faut check pour une case n, ses cases adjacentes de coordonnées (autour de n) : [-1,-1], [-1,0], [-1,1]
+                                                                                                            #    [0,-1],    n   , [0,1]
+                                                                                                            #    [1,-1],  [1,0] , [1,1]
+def CheckSameItemInLine(grid: list[list], playtoken) -> bool:
+    if grid[0][0] == playtoken:
+        if grid[0][1] == playtoken:
+            if grid[0][2] == playtoken:
+                print("let's gooooo")
+                return True
+        elif grid[1][1] == playtoken:
+            if grid[2][2] == playtoken:
+                print("let's gooooo")
+                return True
+        elif grid[1][0] == playtoken:
+            if grid[2][0] == playtoken:
+                print("let's gooooo")
+                return True
+    elif grid[0][1] == playtoken:
+        if grid[1][1] == playtoken:
+            if grid[2][1] == playtoken:
+                print("let's gooooo")
+                return True
+    elif grid[0][2] == playtoken:
+        if grid[1][2] == playtoken:
+            if grid[2][2] == playtoken:
+                print("let's gooooo")
+                return True
+        elif grid[1][1] == playtoken:
+            if grid[3][0] == playtoken:
+                print("let's gooooo")
+                return True
+    elif grid[1][2] == playtoken:
+        if grid[1][1] == playtoken:
+            if grid[1][0] == playtoken:
+                print("let's gooooo")
+                return True
+    elif grid[2][0] == playtoken:
+        if grid[2][1] == playtoken:
+            if grid[2][2] == playtoken:
+                print("let's gooooo")
+                return True
+
+
+def LauchGame():
+    grille: list[list[str]] = \
+        [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
+
+    isBeginning: bool = True
+    isPlayerTurn: bool = True
+    isPlaying: bool = True
+
+    while isPlaying:
+        i: int = 0
+        print("Quelle est la grandeur du plateau de jeu ? ")
+        GRID_LENGTH: int = tools.ask_int()
+        grille: list[list[str]] = GetGrid(GRID_LENGTH)
+        # ResetGrid(grille)
+        while True:
+            isPlayerTurn = True
+            # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
+            if i < (GRID_LENGTH * GRID_LENGTH)-1 and isPlaying: # and is_match_null == False:
+                CheckVoidAddToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH)
+                PrintGrid(grille)
+                if CheckSameItemInLine(grille, playerToken):
+                    print("fin du game")
+                    print("Voulez-vous rejouer ?")
+                    playAgain: str = tools.ask_input(authorized_input)
+                    if playAgain == "n":
+                        isPlaying = False
+                        break
+                    else:
+                        i = 0
+                        print("win")
+                        break
+
+            i += 1
+            print(i)
+            print(len(grille))
+            time.sleep(2.0)
+            isPlayerTurn = False
+            # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
+
+            if i < (GRID_LENGTH * GRID_LENGTH)-1 and isPlaying:  # and is_match_null == False:
+                CheckVoidAddToken(grille, botToken, playerToken, isPlayerTurn, GRID_LENGTH)
+
+                PrintGrid(grille)
+                CheckSameItemInLine(grille, playerToken)
+                if CheckSameItemInLine(grille, botToken):
+                    print("fin du game")
+                    print("Voulez-vous rejouer ?")
+                    playAgain: str = tools.ask_input(authorized_input)
+                    if playAgain == "n":
+                        isPlaying = False
+                        break
+                    else:
+                        i = 0
+                        print("lose")
+                        break
+
+            i += 1
+            print(i)
+            print(len(grille))
+
+
+LauchGame()
