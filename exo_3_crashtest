@@ -90,9 +90,11 @@ def CheckVoidAddToken(grid: list[list], playtoken: str, notplaytoken: str, ispla
                 break
     return
 
-#pour les condi de victoires, il faut check pour une case n, ses cases adjacentes de coordonnées (autour de n) : [-1,-1], [-1,0], [-1,1]
-                                                                                                            #    [0,-1],    n   , [0,1]
-                                                                                                            #    [1,-1],  [1,0] , [1,1]
+#pour les condi de victoires, il faut check pour une case n qui vient d'être jouée, ses cases adjacentes de coordonnées (autour de n) : [-1,-1], [-1,0], [-1,1]
+                                                                                                                                   #    [0,-1],    n   , [0,1]
+                                                                                                                                   #    [1,-1],  [1,0] , [1,1]
+#dans l'idée une boucle qui check dans un sens, une autre dans le sens inverse, incrémente une valeur pour chaque signes bon, puis additionne grâce aux deux boucles, et si on tombe
+# juste dans le x (nb d'alignement demandé), alors win ou lose selon si c'est le joueur ou le bot
 def CheckSameItemInLine(grid: list[list], playtoken) -> bool:
     if grid[0][0] == playtoken:
         if grid[0][1] == playtoken:
