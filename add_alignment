@@ -1,0 +1,212 @@
+import random
+import time
+import tools
+
+authorized_input: list[str] = ["y", "n"]
+playerToken: str = "X"
+botToken: str = "O"
+
+
+# utiliser ça pour add à la grille ? peut-être vider
+# la grille puis avec boucle for ou while a et b (correspondant
+# à l'input pour GRID_LENGTH réparti en longueur et largeur, et faire un grille.append("")
+
+
+def GetGrid(length) -> list[list[str]]:
+    grille: list[list[str]] = []
+    GRID_LENGTH: int = length
+    i: int = 0
+    while i < GRID_LENGTH:
+        line: list[str] = []
+
+        j: int = 0
+        while j < GRID_LENGTH:
+            line.append("")
+            j += 1
+
+        grille.append(line)
+        i += 1
+
+    return grille
+
+
+def ResetGrid(grille):
+    i: int = 0
+    j: int = 0
+    while i < len(grille):
+        while j < len(grille[i]):
+            print(len(grille[i]))
+            grille[i][j] = ""
+            j += 1
+        print(grille[i])
+        i += 1
+
+
+def PrintGrid(grille: list[list[str]]):
+    i: int = 0
+    j: int = 0
+    while i < len(grille):
+        print(grille[i])
+        i += 1
+    print("\n----------------------------\n")
+
+
+# def isMatchNull(gridlength: int, grille: list[list[str]]) -> bool:
+#     i: int = 0
+#     while i < gridlength:
+#         if grille[i] == "":
+#             is_Match_Null = False
+#         else:
+#             is_Match_Null = True
+#         i += 1
+#
+#     return is_Match_Null
+
+
+def PlaceToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn: bool, gridlength: int, nbwinstreak: int):
+    if isplayerturn:
+        while True:
+            print(f"Entrez le numéro de la ligne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
+            x: int = tools.ask_int_in_range(0, gridlength)
+
+            print(f"Entrez le numéro de la colonne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
+            y: int = tools.ask_int_in_range(0, gridlength)
+            if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
+                print("wow")
+            else:
+                grid[x][y] = playtoken
+                print("ah bahj ouais")
+                PrintGrid(grid)
+                if CheckAlign(grid, playtoken, x, y, nbwinstreak, gridlength):
+                    print("marche po mon code")
+                    return True
+
+    else:
+        while True:
+            x: int = random.randint(0, gridlength - 1)
+            y: int = random.randint(0, gridlength - 1)
+
+            if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
+                print("je ne peux plus jouer")
+            else:
+                grid[x][y] = playtoken
+                print("ah bahj ouais")
+                PrintGrid(grid)
+                if CheckAlign(grid, playtoken, x, y, nbwinstreak, gridlength):
+                    print("marche po mon code")
+                    return True
+
+
+
+# pour les condi de victoires, il faut check pour une case n qui vient d'être jouée, ses cases adjacentes de coordonnées (autour de n) : [-1,-1], [-1,0], [-1,1]
+#    [0,-1],    n   , [0,1]
+#    [1,-1],  [1,0] , [1,1]
+# dans l'idée une boucle qui check dans un sens, une autre dans le sens inverse, incrémente une valeur pour chaque signes bon, puis additionne grâce aux deux boucles, et si on tombe
+# juste dans le x (nb d'alignement demandé), alors win ou lose selon si c'est le joueur ou le bot
+
+
+def CheckAlign(grid: list[list], playtoken: str, x: int, y: int, nbwinstrike: int, gridlength: int) -> bool:
+    i: int = 0  # axe des y (lignes)
+    k: int = 0
+    while grid[x + i][y] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+
+    i: int = 0
+    while grid[x - i][y] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+
+    if k == nbwinstrike:
+        return True
+
+    k = 0
+    i: int = 0
+    while grid[x][y + i] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+    i: int = 0
+    while grid[x][y - i] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+
+    if k == nbwinstrike:
+        return True
+
+    k = 0
+    i: int = 0
+    while grid[x - i][y + i] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+    i: int = 0
+    while grid[x - i][y - i] == playtoken and 0 <= x + i <= gridlength:
+        k += 1
+        i += 1
+
+    if k == nbwinstrike:
+        return True
+
+    return False
+
+def LauchGame():
+    grille: list[list[str]] = \
+        [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
+
+    isBeginning: bool = True
+    isPlayerTurn: bool = True
+    isPlaying: bool = True
+
+    while isPlaying:
+        i: int = 0
+        print("Quelle est la grandeur du plateau de jeu ? ")
+        GRID_LENGTH: int = tools.ask_int()
+        print("Combien d'alignement gagnant ? ")
+        nbwinstreak: int = tools.ask_int()
+        grille: list[list[str]] = GetGrid(GRID_LENGTH)
+        # ResetGrid(grille)
+        while True:
+            isPlayerTurn = True
+            # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
+            if i < (GRID_LENGTH * GRID_LENGTH) - 1 and isPlaying:  # and is_match_null == False:
+                if not PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
+                    print("fin du game")
+                    print("Voulez-vous rejouer ?")
+                    playAgain: str = tools.ask_input(authorized_input)
+                    if playAgain == "n":
+                        isPlaying = False
+                        break
+                    else:
+                        i = 0
+                        print("win")
+                        break
+
+            i += 1
+            print(i)
+            print(len(grille))
+            time.sleep(2.0)
+            isPlayerTurn = False
+            # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
+
+            if i < (GRID_LENGTH * GRID_LENGTH) - 1 and isPlaying:  # and is_match_null == False:
+                if not PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
+                    print("fin du game")
+                    print("Voulez-vous rejouer ?")
+                    playAgain: str = tools.ask_input(authorized_input)
+                    if playAgain == "n":
+                        isPlaying = False
+                        break
+                    else:
+                        i = 0
+                        print("lose")
+                        break
+
+            i += 1
+            print(i)
+            print(len(grille))
+
+
+LauchGame()
