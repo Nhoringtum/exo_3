@@ -173,7 +173,7 @@ def LauchGame():
             isPlayerTurn = True
             # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
             if i < (GRID_LENGTH * GRID_LENGTH) - 1 and isPlaying:  # and is_match_null == False:
-                if not PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
+                if PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
                     print("fin du game")
                     print("Voulez-vous rejouer ?")
                     playAgain: str = tools.ask_input(authorized_input)
@@ -193,7 +193,7 @@ def LauchGame():
             # is_match_null: bool = isMatchNull(GRID_LENGTH, grille)
 
             if i < (GRID_LENGTH * GRID_LENGTH) - 1 and isPlaying:  # and is_match_null == False:
-                if not PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
+                if PlaceToken(grille, playerToken, botToken, isPlayerTurn, GRID_LENGTH, nbwinstreak):
                     print("fin du game")
                     print("Voulez-vous rejouer ?")
                     playAgain: str = tools.ask_input(authorized_input)
