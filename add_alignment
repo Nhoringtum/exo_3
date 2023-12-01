@@ -63,14 +63,15 @@ def PrintGrid(grille: list[list[str]]):
 #     return is_Match_Null
 
 
-def PlaceToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn: bool, gridlength: int, nbwinstreak: int):
+def PlaceToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn: bool, gridlength: int,
+               nbwinstreak: int) -> bool:
     if isplayerturn:
         while True:
             print(f"Entrez le numéro de la ligne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
-            x: int = tools.ask_int_in_range(0, gridlength-1)
+            x: int = tools.ask_int_in_range(0, gridlength - 1)
 
             print(f"Entrez le numéro de la colonne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
-            y: int = tools.ask_int_in_range(0, gridlength-1)
+            y: int = tools.ask_int_in_range(0, gridlength - 1)
             if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
                 print("wow")
             else:
@@ -95,7 +96,6 @@ def PlaceToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn
                 if CheckAlign(grid, playtoken, x, y, nbwinstreak, gridlength):
                     print("marche po mon code")
                     return True
-
 
 
 # pour les condi de victoires, il faut check pour une case n qui vient d'être jouée, ses cases adjacentes de coordonnées (autour de n) : [-1,-1], [-1,0], [-1,1]
@@ -147,6 +147,7 @@ def CheckAlign(grid: list[list], playtoken: str, x: int, y: int, nbwinstrike: in
         return True
 
     return False
+
 
 def LauchGame():
     grille: list[list[str]] = \
