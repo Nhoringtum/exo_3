@@ -67,10 +67,10 @@ def PlaceToken(grid: list[list], playtoken: str, notplaytoken: str, isplayerturn
     if isplayerturn:
         while True:
             print(f"Entrez le numéro de la ligne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
-            x: int = tools.ask_int_in_range(0, gridlength)
+            x: int = tools.ask_int_in_range(0, gridlength-1)
 
             print(f"Entrez le numéro de la colonne où vous voulez placer votre jeton de 0 à {gridlength - 1} : ")
-            y: int = tools.ask_int_in_range(0, gridlength)
+            y: int = tools.ask_int_in_range(0, gridlength-1)
             if grid[x][y] == playtoken or grid[x][y] == notplaytoken:
                 print("wow")
             else:
